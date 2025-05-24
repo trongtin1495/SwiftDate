@@ -54,6 +54,7 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 	public init(_ date: Date = Date(), region: Region = SwiftDate.defaultRegion) {
 		self.date = date
 		self.region = region
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
 	}
 
 	/// Initialize a new `DateInRegion` by parsing given string.
@@ -73,6 +74,7 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 		}
 		self.date = date
 		self.region = region
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
 	}
 
 	/// Initialize a new `DateInRegion` by parsing given string with the ordered list of passed formats.
@@ -92,6 +94,7 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 		}
 		self.date = date
 		self.region = region
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
 	}
 
 	/// Initialize a new date from the number of seconds passed since Unix Epoch.
@@ -102,6 +105,7 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 	public init(seconds interval: TimeInterval, region: Region = Region.UTC) {
 		self.date = Date(timeIntervalSince1970: interval)
 		self.region = region
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
 	}
 
 	/// Initialize a new date corresponding to the number of milliseconds since the Unix Epoch.
@@ -112,6 +116,7 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 	public init(milliseconds interval: Int, region: Region = Region.UTC) {
 		self.date = Date(timeIntervalSince1970: TimeInterval(interval) / 1000)
 		self.region = region
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
 	}
 
 	/// Initialize a new date with the opportunity to configure single date components via builder pattern.
@@ -131,6 +136,7 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 		}
 		self.date = date
 		self.region = r
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
 	}
 
 	/// Initialize a new date with given components.
@@ -146,6 +152,7 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 		}
 		self.date = date
 		self.region = r
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
 	}
 
 	/// Initialize a new date with given components.
@@ -162,6 +169,7 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 		components.calendar = region.calendar
 		self.date = region.calendar.date(from: components)!
 		self.region = region
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
 	}
 
 	/// Return a date in the distant past.
@@ -185,4 +193,20 @@ public struct DateInRegion: DateRepresentable, Decodable, Encodable, CustomStrin
 		case region
 	}
 
+}
+
+extension DateInRegion {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.date = try container.decode(Date.self, forKey: .date)
+        self.region = try container.decode(Region.self, forKey: .region)
+        self.customFormatter = nil
+        self.totalSeconds = Int(self.date.timeIntervalSince1970)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(date, forKey: .date)
+        try container.encode(region, forKey: .region)
+    }
 }

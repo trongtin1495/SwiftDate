@@ -42,7 +42,7 @@ extension Calendar.Identifier: CalendarConvertible {
 
 // MARK: - Support for Calendar.Identifier encoding with Codable
 
-extension Calendar.Identifier: CustomStringConvertible {
+extension Calendar.Identifier: @retroactive CustomStringConvertible {
 
 	public var description: String {
 		switch self {
